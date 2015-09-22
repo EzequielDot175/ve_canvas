@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		#nufarm{
+			border: 1px solid black;
+		}
+	</style>
+</head>
+
+	<canvas id="nufarm"  width="0">
+		
+	</canvas>
+<body>
+	<script>
+
+	var example = [];
+
+		var VE = function(id){
+			/**
+			 * Private vars
+			 */
+			var element = document.getElementById(id);
+			var canvas = element.getContext('2D');
+
+			/**
+			 * Public vars
+			 */
+			this.heightColumns = 50;
+			var width = 300;
+
+			var map = {
+				x: [0,8],
+				y: []
+			}
+
+
+
+			this.draw = function(){
+
+			}
+			this.setColumns = function(columns){
+				var math = (columns.length * this.heightColumns) + this.heightColumns;
+				element.height = math;
+				element.width  = width;
+
+				columns.map(function(elem, index) {
+					console.log(elem);
+				});
+			}
+			this.setWidth = function(width){
+				element.width  = width;
+			}
+			this.
+		} 
+
+	var ve = new VE('nufarm');
+		ve.setColumns([0,50,100,150,200,250,300]);
+		ve.setWidth(400);
+	</script>
+</body>
+</html>
