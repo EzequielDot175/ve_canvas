@@ -10,55 +10,81 @@
 	</style>
 </head>
 
-	<canvas id="nufarm"  width="0">
+	<canvas id="nufarm"  width="500" height="300">
 		
 	</canvas>
 <body>
 	<script>
 
-	var example = [];
-
 		var VE = function(id){
-			/**
-			 * Private vars
-			 */
+
 			var element = document.getElementById(id);
-			var canvas = element.getContext('2D');
+			var canvas = element.getContext('2d');
+			var map = [];
 
-			/**
-			 * Public vars
-			 */
-			this.heightColumns = 50;
-			var width = 300;
+			var countX = 9;
+			var countY = 8;
 
-			var map = {
-				x: [0,8],
-				y: []
+			this.heightCell = Math.round(element.height / countY);
+			this.widthCell = Math.round(element.width / countX);
+			this.init = function(){
+
+				this.setMap();
+				this.drawCells();
+				
 			}
 
-
-
-			this.draw = function(){
-
+			this.setMap = function(){
+				for (var y = 0; y < countY; y++) {
+					var column = [];
+					for (var x = 0; x < countX; x++) {
+						column.push({x: x * this.widthCell, y : y * this.heightCell});
+					};
+					map.push(column);
+				};
 			}
-			this.setColumns = function(columns){
-				var math = (columns.length * this.heightColumns) + this.heightColumns;
-				element.height = math;
-				element.width  = width;
-
-				columns.map(function(elem, index) {
-					console.log(elem);
+			this.drawCells = function(){
+				funcRight = this.drawRight;
+				funcBottom = this.drawBottom;
+				hCell = this.heightCell;
+				wCell = this.widthCell;
+				canvas.moveTo(0, 0);
+				// canvas.fillRect();
+				map.map(function(elem, index) {
+					elem.map(function(el, ind) {
+						canvas.strokeRect(el.x,el.y,wCell,hCell);
+					});
 				});
-			}
-			this.setWidth = function(width){
-				element.width  = width;
-			}
-			this.
-		} 
 
-	var ve = new VE('nufarm');
-		ve.setColumns([0,50,100,150,200,250,300]);
-		ve.setWidth(400);
+				canvas.clearRect(0,0,wCell,element.height);
+
+				console.log(map);
+
+			}
+
+			this.drawRight = function(y,x){
+				canvas.moveTo(x, y );
+				canvas.lineTo(y,y);
+				canvas.stroke();
+			}
+			this.drawBottom = function(y,x){
+				canvas.moveTo(y, x);
+				canvas.lineTo(y,y);
+				canvas.stroke();
+			}
+
+			this.drawLine = function(x,y){
+				canvas.beginPath();
+				canvas.moveTo(10, 20);
+				canvas.lineTo(10,20);
+				canvas.stroke();
+			}
+
+		}
+
+		var ve = new VE('nufarm');
+			ve.init();
+
 	</script>
 </body>
 </html>
