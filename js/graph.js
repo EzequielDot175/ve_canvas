@@ -141,14 +141,17 @@ class veCanvas extends canvasHelpers{
 		return scale * n;
 	}
 
+
+
 	displayinfo(event){
 		var cursor = {
 			x : event.offsetX,
-			y : event.offsetY
+			y : this.y(event.offsetY)
 		}
 		this.clearCanvas();
 		this._WorkSpace();
-		console.log(cursor);
+		this._PointInfo(cursor);
+		//console.log(cursor);
 	}
 
 
@@ -157,6 +160,36 @@ class veCanvas extends canvasHelpers{
 		this.info.total = p.total;
 		this.info.clave = p.clave;
 	}
+
+
+
+	_PointInfo(cursor){
+		var merge = this.pointers.total.concat(this.pointers.clave);
+		var sum = 10;
+		var newCursor = {
+			y : (this.y(cursor.y) + this.workspace.paddingBottom),
+			x : cursor.x + this.workspace.paddingLeft
+		}
+			//console.log("================================");
+		for (var i = 0; i < merge.length; i++) {
+			var objY = this.y(this.getScale(merge[i].y) ) ;
+			var objX = Math.round(merge[i].x + this.workspace.paddingLeft);
+			//console.info('Reporting x,y:', objX,objY);
+			
+			if(  ( (objX - sum) >= newCursor.x && ((objX + sum) <= newCursor.x) )   && (objY - sum) >= newCursor.y && ((objY + sum) <= newCursor.y)  ){
+				console.info('Reporting merge:', merge[i]);
+			}
+			document.getElementById(i).innerHTML = "Object merge into ["+i+"] Canvas : X["+objX+"] | Y["+objY+"] | PERC["+merge[i].perc+"]";
+		};
+			//console.log("================================");
+
+	
+
+		document.getElementById('cursor').innerHTML = "Cursor into Canvas : X["+newCursor.x+"] | Y["+newCursor.y+"]";
+
+		
+	}
+
 
 	_Pointers(c,n){
 
@@ -304,6 +337,9 @@ class veCanvas extends canvasHelpers{
 	draw(){
 		//this.clearCanvas();
 		this._WorkSpace();
+		console.info('Reporting clave:', this.pointers.clave);
+		console.info('Reporting y:', this.y(this.pointers.clave[0].y) );
+		console.info('Reporting x:', this.pointers.clave[0].x + this.workspace.paddingLeft);
 
 	}
 
