@@ -10,81 +10,50 @@
 	</style>
 </head>
 
-	<canvas id="nufarm"  width="500" height="300">
+	<canvas id="nufarm" width="1000" height="300">
 		
 	</canvas>
 <body>
+	
+	<script src="js/graph.js"></script>
 	<script>
+		var canvas = new veCanvas();
+			
+			canvas.setWorkSpace({
+				paddingLeft: 90,
+				paddingBottom: 60,
+			});
 
-		var VE = function(id){
+			canvas.setColumnProperties({
+				hColumns: 50
+			});
 
-			var element = document.getElementById(id);
-			var canvas = element.getContext('2d');
-			var map = [];
-
-			var countX = 9;
-			var countY = 8;
-
-			this.heightCell = Math.round(element.height / countY);
-			this.widthCell = Math.round(element.width / countX);
-			this.init = function(){
-
-				this.setMap();
-				this.drawCells();
-				
-			}
-
-			this.setMap = function(){
-				for (var y = 0; y < countY; y++) {
-					var column = [];
-					for (var x = 0; x < countX; x++) {
-						column.push({x: x * this.widthCell, y : y * this.heightCell});
-					};
-					map.push(column);
-				};
-			}
-			this.drawCells = function(){
-				funcRight = this.drawRight;
-				funcBottom = this.drawBottom;
-				hCell = this.heightCell;
-				wCell = this.widthCell;
-				canvas.moveTo(0, 0);
-				// canvas.fillRect();
-				map.map(function(elem, index) {
-					elem.map(function(el, ind) {
-						canvas.strokeRect(el.x,el.y,wCell,hCell);
-					});
-				});
-
-				canvas.clearRect(0,0,wCell,element.height);
-
-				console.log(map);
-
-			}
-
-			this.drawRight = function(y,x){
-				canvas.moveTo(x, y );
-				canvas.lineTo(y,y);
-				canvas.stroke();
-			}
-			this.drawBottom = function(y,x){
-				canvas.moveTo(y, x);
-				canvas.lineTo(y,y);
-				canvas.stroke();
-			}
-
-			this.drawLine = function(x,y){
-				canvas.beginPath();
-				canvas.moveTo(10, 20);
-				canvas.lineTo(10,20);
-				canvas.stroke();
-			}
-
-		}
-
-		var ve = new VE('nufarm');
-			ve.init();
-
+			canvas.data({
+				label: ['','','','','','','',''],
+				total: [
+					{percent:160,value:100000},
+					{percent:70,value:100000},
+					{percent:60,value:100000},
+					{percent:50,value:100000},
+					{percent:40,value:100000},
+					{percent:30,value:100000},
+					{percent:20,value:100000},
+					{percent:40,value:100000}
+				],
+				clave: [
+					{percent:75,value:5000},
+					{percent:65,value:5000},
+					{percent:55,value:5000},
+					{percent:45,value:5000},
+					{percent:35,value:5000},
+					{percent:25,value:5000},
+					{percent:15,value:5000},
+					{percent:5,value:5000}
+				]
+			});
+			canvas.commit();
+			canvas.draw();
 	</script>
+
 </body>
 </html>
