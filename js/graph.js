@@ -6,6 +6,7 @@ class canvasHelpers {
 	y(n){
 		return Math.abs(n - this.height);
 	}
+
 	x(n){
 		return Math.abs(n - this.width);
 	}
@@ -33,29 +34,42 @@ class canvasHelpers {
 
 	getMeasure(text,size){
 		this.ctx.save();
-		this.ctx.font = size+" sans-serif";
+		this.ctx.font = size+"px sans-serif";
 		var font = this.ctx.measureText(text).width;
 		this.ctx.restore();
 		return font;
 	}
 
-	drawText(l,b,text,size){
+	drawText(l,b,text,size,prefix){
+		var prefix = prefix || "";
 		this.ctx.save();
 		this.ctx.beginPath();
-		this.ctx.font = size+" sans-serif";
+		this.ctx.font = prefix+" "+size+"px sans-serif";
 		this.ctx.fillText(text,l,this.y(b))
 		this.ctx.closePath();
 		this.ctx.restore();
 	}
 
 	drawCircle(x, y, r,c){
-		this.ctx.save(x,y,r);
+		this.ctx.save();
 		this.ctx.beginPath();
 		this.ctx.fillStyle = c || "#000000";
 		this.ctx.arc(x, y, r, 0, 2 * Math.PI, false);
 		this.ctx.closePath();
 		this.ctx.fill();
 		this.ctx.restore();
+	}
+
+	drawRectGradient(x,y,w,h,c){
+		this.ctx.save();
+		this.ctx.beginPath();
+		this.ctx.fillStyle = c || "#000000";
+		this.ctx.fillRect(x,y,w,h,c);
+		this.ctx.closePath();
+		this.ctx.restore();
+	}
+	clearCanvas(){
+		this.ctx.clearRect(0,0,this.width,this.height);
 	}
 
 }
@@ -127,12 +141,21 @@ class veCanvas extends canvasHelpers{
 		return scale * n;
 	}
 
+	displayinfo(event){
+		var cursor = {
+			x : event.offsetX,
+			y : event.offsetY
+		}
+		this.clearCanvas();
+		this._WorkSpace();
+		console.log(cursor);
+	}
+
 
 	data(p){
 		this.setMaxPercent(p.total);
 		this.info.total = p.total;
 		this.info.clave = p.clave;
-		//this.setPointers(p.total,"total");
 	}
 
 	_Pointers(c,n){
@@ -149,7 +172,6 @@ class veCanvas extends canvasHelpers{
 			});
 		};
 		this.pointers[n] = d.reverse();
-		//console.info('Reportando this.pointers[n]: ' , this.pointers[n].reverse() );
 	}
 	_ColumnsX(){
 		var x = [];
@@ -183,8 +205,45 @@ class veCanvas extends canvasHelpers{
 	_DrawPoints(n,c){
 		for (var i = 0; i < this.pointers[n].length; i++) {
 			var p = this.pointers[n][i];
-			this.drawCircle(p.x ,this.y(p.y + this.workspace.paddingBottom) ,5,c);
+			this.drawCircle(p.x ,this.y(p.y + this.workspace.paddingBottom) ,4,c);
 		};
+	}
+
+	_DrawRectOneHundredGradient(){
+		this.drawRectGradient(
+			this.workspace.paddingLeft,
+			this.y(this.workspace.paddingBottom + (this.columnProperties.hColumns * 2)),
+			this.width - this.workspace.paddingLeft,
+			this.columnProperties.hColumns * 2,
+			"rgba(77,77,77,0.1)");
+	}
+	
+
+	_DrawLinePoints(n,color){
+
+		this.ctx.save();
+		this.ctx.beginPath();
+		this.ctx.fillStyle = color;
+		this.ctx.moveTo(this.workspace.paddingLeft,this.y(this.workspace.paddingBottom));
+		// 0 to n
+		this.ctx.lineTo(this.pointers[n][0].x,this.y(this.pointers[n][0].y + this.workspace.paddingBottom));
+
+		for (var i = 0; i < this.pointers[n].length; i++) {
+
+			if(this.pointers[n][i + 1] != undefined){
+
+				this.ctx.lineTo(this.pointers[n][i + 1].x,this.y(this.pointers[n][i + 1].y + this.workspace.paddingBottom));
+			}
+
+		};
+		//to end canvas
+		this.ctx.lineTo(this.width,this.y(this.pointers[n][ this.pointers[n].length - 1 ].y + this.workspace.paddingBottom));
+		// go to bottom workspace
+		this.ctx.lineTo(this.width, this.y(this.workspace.paddingBottom));
+
+		this.ctx.closePath();
+		this.ctx.fill();
+		this.ctx.restore();
 	}
 
 	_WorkSpace(){
@@ -214,16 +273,24 @@ class veCanvas extends canvasHelpers{
 			this.width,
 			relToBottom);
 
-			this.drawText(relToLeft - measure - 5 ,relToBottom - 2  ,text,14);
+			if(tmp == 100){
+				this.drawText(relToLeft - measure - 5 ,relToBottom - 2  ,text,14,"bold");
+				this._DrawRectOneHundredGradient();
+			}else{
+				this.drawText(relToLeft - measure - 5 ,relToBottom - 2  ,text,14);
+			}
 		};
 
 		// draw pointers "total"
+		
+		this._DrawLinePoints("total","rgba(141,42,141,0.5)");
+		this._DrawLinePoints("clave","rgba(141,42,141,0.5)");
 		this._DrawPoints("total","#6085A8");
 		this._DrawPoints("clave","#272822");
 
 
-
 	}
+
 
 
 	commit(){
@@ -235,7 +302,9 @@ class veCanvas extends canvasHelpers{
 	}
 
 	draw(){
+		//this.clearCanvas();
 		this._WorkSpace();
+
 	}
 
 
